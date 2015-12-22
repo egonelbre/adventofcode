@@ -4,32 +4,39 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"strings"
 	"unicode"
 )
 
 type Chemistry struct {
-	LastID     Atom
-	ToAtom     map[string]Atom
-	ToString   map[Atom]string
-	Transforms map[Atom][]Molecule
+	LastID         byte
+	ToAtom         map[string]byte
+	ToString       map[byte]string
+	ReactionByAtom map[byte][]Molecule
+	Reactions      []Reaction
+}
+
+type Reaction struct {
+	From byte
+	Into Molecule
 }
 
 func NewChemistry() *Chemistry {
 	return &Chemistry{
-		LastID:     'f',
-		ToAtom:     make(map[string]Atom, 256),
-		ToString:   make(map[Atom]string, 256),
-		Transforms: make(map[Atom][]Molecule, 256),
+		LastID:         'f',
+		ToAtom:         make(map[string]byte, 256),
+		ToString:       make(map[byte]string, 256),
+		ReactionByAtom: make(map[byte][]Molecule, 256),
 	}
 }
 
-func (chem *Chemistry) Atom(name string) Atom {
+func (chem *Chemistry) Atom(name string) byte {
 	atom, ok := chem.ToAtom[name]
 	if !ok {
 		if len(name) == 1 {
-			atom = Atom(name[0])
+			atom = byte(name[0])
 		} else {
 			atom = chem.LastID
 			chem.LastID++
@@ -59,32 +66,22 @@ func (chem *Chemistry) Molecule(molecule string) Molecule {
 	return mol
 }
 
-func (chem *Chemistry) AddTransform(from Atom, into Molecule) {
-	chem.Transforms[from] = append(chem.Transforms[from], into)
+func (chem *Chemistry) AddReaction(from byte, into Molecule) {
+	chem.ReactionByAtom[from] = append(chem.ReactionByAtom[from], into)
+	chem.Reactions = append(chem.Reactions, Reaction{from, into})
 }
 
-type Atom byte
-type Molecule []Atom
+type Molecule []byte
 
-func (m Molecule) String() string {
-	r := make([]byte, len(m))
-	for i, x := range m {
-		r[i] = byte(x)
-	}
-	return string(r)
-}
-
-type Transforms map[Atom][][]Atom
+func (m Molecule) String() string { return string(m) }
 
 type MoleculeSet map[string]struct{}
 
-func (set MoleculeSet) Add(m Molecule) {
-	set[m.String()] = struct{}{}
-}
+func (set MoleculeSet) Add(m Molecule) { set[m.String()] = struct{}{} }
 
 func Enum(mol Molecule, all MoleculeSet, chem *Chemistry) {
 	for i, atom := range mol {
-		for _, repl := range chem.Transforms[atom] {
+		for _, repl := range chem.ReactionByAtom[atom] {
 			x := append(append(mol[:i:i], repl...), mol[i+1:]...)
 			all.Add(x)
 		}
@@ -99,9 +96,56 @@ func EnumR(head, tail Molecule, all MoleculeSet, chem *Chemistry) {
 
 	atom, rest := tail[0], tail[1:]
 	EnumR(append(head, atom), rest, all, chem)
-	for _, repl := range chem.Transforms[atom] {
+	for _, repl := range chem.ReactionByAtom[atom] {
 		EnumR(append(head, repl...), rest, all, chem)
 	}
+}
+
+func IndexAll(mol Molecule, sub Molecule) (rs []int) {
+	i := 0
+	for i < len(mol) {
+		x := bytes.Index(mol[i:], sub)
+		if x < 0 {
+			return rs
+		}
+		rs = append(rs, i+x)
+		i = i + x + len(sub)
+	}
+	return rs
+}
+
+type MoleculeDist map[string]int
+
+var smallest int
+
+func Reduce(w int, mol Molecule, chem *Chemistry, cache MoleculeDist) int {
+	if w > smallest {
+		return 1 << 31
+	}
+	if v, cached := cache[mol.String()]; cached {
+		return v
+	}
+	if len(mol) == 1 && mol[0] == 'e' {
+		return 0
+	}
+	min := 1 << 31
+	for _, react := range chem.Reactions {
+		sub := react.Into
+		matches := IndexAll(mol, sub)
+		for _, m := range matches {
+			next := append(append(mol[:m:m], react.From), mol[m+len(sub):]...)
+			n := 1 + Reduce(w+1, next, chem, cache)
+			if n < min {
+				min = n
+			}
+		}
+	}
+	if min+w < smallest {
+		smallest = min + w
+		fmt.Println(smallest)
+	}
+	cache[mol.String()] = min
+	return min
 }
 
 func solve(input string) {
@@ -123,17 +167,21 @@ func solve(input string) {
 
 		from := chem.Atom(fromname)
 		into := chem.Molecule(intoname)
-		chem.AddTransform(from, into)
+		chem.AddReaction(from, into)
 	}
 
 	s.Scan()
 	target := chem.Molecule(s.Text())
-	fmt.Printf("%+v", chem)
-	fmt.Println(target)
+	fmt.Printf("%+v\n", chem)
+	fmt.Println(len(target), target)
 
 	all := make(MoleculeSet)
 	Enum(target, all, chem)
-	fmt.Println(len(all))
+	fmt.Println("ALL:", len(all))
+
+	cache := make(MoleculeDist)
+	smallest = 1 << 31
+	fmt.Println("RED:", Reduce(0, target, chem, cache))
 }
 
 func main() {
@@ -144,6 +192,8 @@ func main() {
 var practice = `H => HO
 H => OH
 O => HH
+e => H
+e => O
 
 HOH`
 
