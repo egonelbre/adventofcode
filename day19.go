@@ -18,7 +18,7 @@ type Chemistry struct {
 
 func NewChemistry() *Chemistry {
 	return &Chemistry{
-		LastID:     0x61,
+		LastID:     'f',
 		ToAtom:     make(map[string]Atom, 256),
 		ToString:   make(map[Atom]string, 256),
 		Transforms: make(map[Atom][]Molecule, 256),
