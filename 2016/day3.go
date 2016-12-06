@@ -6,13 +6,7 @@ import (
 	"strings"
 )
 
-func IsValid(tri string) bool {
-	vs := strings.Fields(tri)
-
-	a, _ := strconv.Atoi(vs[0])
-	b, _ := strconv.Atoi(vs[1])
-	c, _ := strconv.Atoi(vs[2])
-
+func IsValid(a, b, c int) bool {
 	if a > c {
 		a, c = c, a
 	}
@@ -22,27 +16,57 @@ func IsValid(tri string) bool {
 	if b > c {
 		b, c = c, b
 	}
-
 	return a+b > c
 }
 
-func main() {
-	valid := 0
-	invalid := 0
+type Data [][3]int
+
+func ReadData(input string) Data {
+	data := Data{}
 	for _, line := range strings.Split(input, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
 
-		if IsValid(line) {
+		var xs [3]int
+		vs := strings.Fields(line)
+		xs[0], _ = strconv.Atoi(vs[0])
+		xs[1], _ = strconv.Atoi(vs[1])
+		xs[2], _ = strconv.Atoi(vs[2])
+
+		data = append(data, xs)
+	}
+	return data
+}
+
+func ValidValue(a, b, c int) int {
+	if IsValid(a, b, c) {
+		return 1
+	}
+	return 0
+}
+
+func main() {
+	data := ReadData(input)
+
+	valid, invalid := 0, 0
+	for _, row := range data {
+		if IsValid(row[0], row[1], row[2]) {
 			valid++
 		} else {
 			invalid++
 		}
 	}
-
 	fmt.Println(valid, invalid)
+
+	valid = 0
+	for i := 0; i < len(data); i += 3 {
+		valid += ValidValue(data[i][0], data[i+1][0], data[i+2][0])
+		valid += ValidValue(data[i][1], data[i+1][1], data[i+2][1])
+		valid += ValidValue(data[i][2], data[i+1][2], data[i+2][2])
+	}
+	fmt.Println(valid)
 }
 
 const input = `
