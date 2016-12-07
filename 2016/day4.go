@@ -9,6 +9,7 @@ import (
 
 type Name struct {
 	Segments []string
+	Decoded  []string
 	Sector   int
 	Checksum string
 }
@@ -27,6 +28,14 @@ func (xs FrequencyTable) Less(i, j int) bool {
 		return xs[i].Count > xs[j].Count
 	}
 	return xs[i].Letter < xs[j].Letter
+}
+
+func rotate(s string, n int) string {
+	data := []byte(s)
+	for i, b := range data {
+		data[i] = byte((int(b)-'a'+n)%('z'-'a'+1) + 'a')
+	}
+	return string(data)
 }
 
 func (name Name) IsValid() bool {
@@ -84,6 +93,11 @@ func Parse(line string) (name Name) {
 		name.Checksum = line[s:p]
 	}
 
+	for _, seg := range name.Segments {
+		decoded := rotate(seg, name.Sector)
+		name.Decoded = append(name.Decoded, decoded)
+	}
+
 	return name
 }
 
@@ -92,6 +106,8 @@ func main() {
 	fmt.Printf("%v\n", Parse(`a-b-c-d-e-f-g-h-987[abcde]`))
 	fmt.Printf("%v\n", Parse(`not-a-real-room-404[oarel]`))
 	fmt.Printf("%v\n", Parse(`totally-real-room-200[decoy]`))
+
+	fmt.Printf("%v\n", Parse(`qzmt-zixmtkozy-ivhz-343[xxxxx]`))
 
 	fmt.Printf("%v\n", Parse(`aaaaa-bbb-z-y-x-123[abxyz]`).IsValid())
 	fmt.Printf("%v\n", Parse(`a-b-c-d-e-f-g-h-987[abcde]`).IsValid())
@@ -109,7 +125,10 @@ func main() {
 		if name.IsValid() {
 			sum += name.Sector
 		}
+
+		fmt.Println(name.Sector, name.Decoded)
 	}
+
 	fmt.Println(sum)
 }
 
