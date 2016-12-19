@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"time"
 )
 
 var (
@@ -10,19 +11,22 @@ var (
 )
 
 type Elf struct {
-	Name     int
-	Presents int
-	Next     *Elf
+	Name int
+	Next *Elf
 }
 
 func NewCircle(n int) (count int, first, precenter *Elf) {
+	elves := make([]Elf, n)
+
 	var prev *Elf
-	first = &Elf{Name: 1, Presents: 1}
+	first = &elves[0]
+	first.Name = 1
 	prev = first
 
 	centern := 1 + n/2
 	for i := 2; i <= n; i++ {
-		next := &Elf{Name: i, Presents: 1}
+		next := &elves[i-1]
+		next.Name = i
 		if i == centern-1 {
 			precenter = next
 		}
@@ -35,13 +39,6 @@ func NewCircle(n int) (count int, first, precenter *Elf) {
 
 func StealLeft(count int, active, precenter *Elf) *Elf {
 	for active != active.Next {
-		if *verbose {
-			fmt.Println(
-				active.Name,
-				"<< ", active.Next.Name, "[", active.Next.Presents, "]",
-				"=", active.Presents+active.Next.Presents)
-		}
-		active.Presents += active.Next.Presents
 		active.Next = active.Next.Next
 		active = active.Next
 	}
@@ -51,14 +48,6 @@ func StealLeft(count int, active, precenter *Elf) *Elf {
 func StealAcross(count int, active, precenter *Elf) *Elf {
 	for active != active.Next {
 		center := precenter.Next
-		if *verbose {
-			fmt.Println(
-				active.Name,
-				"<< ", center.Name, "[", center.Presents, "]",
-				"=", active.Presents+center.Presents)
-		}
-		active.Presents += center.Presents
-
 		precenter.Next = center.Next
 		if count&1 == 1 {
 			precenter = precenter.Next
@@ -70,6 +59,40 @@ func StealAcross(count int, active, precenter *Elf) *Elf {
 	return active
 }
 
+func StealAcrossAlternate(count int) int {
+	elves := make([]int, count)
+	next := make([]int, count)
+	for i := range elves {
+		elves[i] = i + 1
+	}
+
+	for count > 1 {
+		next = next[:0:cap(next)]
+		j := 0
+		k := -1
+		d := 0
+		for i, elf := range elves {
+			if elf != 0 {
+				j = i + (count-d)/2 + d
+				if j < count {
+					k = i
+					j = j % count
+					elves[j] = 0
+					d++
+				} else {
+					next = append(next, elf)
+				}
+			}
+		}
+
+		next = append(next, elves[:k+1]...) // O(n)
+		elves, next = next, elves
+		count = len(elves)
+	}
+
+	return elves[0]
+}
+
 func main() {
 	flag.Parse()
 
@@ -77,5 +100,14 @@ func main() {
 	// fmt.Println(StealLeft(NewCircle(3001330)))
 	fmt.Println(StealAcross(NewCircle(5)))
 	fmt.Println(StealAcross(NewCircle(6)))
-	fmt.Println(StealAcross(NewCircle(3001330)))
+
+	N := 64 * 3001330
+
+	start := time.Now()
+	fmt.Println(StealAcross(NewCircle(N)))
+	fmt.Println(time.Since(start))
+
+	start = time.Now()
+	fmt.Println(StealAcrossAvo(N))
+	fmt.Println(time.Since(start))
 }
