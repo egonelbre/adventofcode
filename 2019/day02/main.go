@@ -70,17 +70,18 @@ const (
 	OpHalt     = OpCode(99)
 )
 
-// Store := A <Op> B
 type (
 	Instr interface {
 		Exec(cpu *Computer) error
 	}
 
+	// [Store] := [A] + [B]
 	Add struct {
 		A, B  int64
 		Store int64
 	}
 
+	// [Store] := [A] * [B]
 	Multiply struct {
 		A, B  int64
 		Store int64
