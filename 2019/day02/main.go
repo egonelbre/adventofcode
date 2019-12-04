@@ -179,6 +179,11 @@ func main() {
 		Code: Input,
 	}
 
+	// To do this, before running the program, replace position 1 with the value 12 and replace position 2 with the value 2.
+
+	cpu.Code[1] = 12
+	cpu.Code[2] = 2
+
 	for !cpu.Halted {
 		err := cpu.Step()
 		if err != nil {
