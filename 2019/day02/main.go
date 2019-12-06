@@ -159,6 +159,16 @@ func (cpu *Computer) Step() error {
 	return nil
 }
 
+func (cpu *Computer) Run() error {
+	for !cpu.Halted {
+		err := cpu.Step()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func DecodeInstr(code Code) (instr Instr, advance int64, err error) {
 	if len(code) == 0 {
 		return Halt{}, 0, fmt.Errorf("code missing")
@@ -187,25 +197,42 @@ func DecodeInstr(code Code) (instr Instr, advance int64, err error) {
 
 func main() {
 	AlarmProgram(Input)
+
+	noun, verb := FindNounVerb(Input, 19690720)
+	fmt.Println("Output", noun*100+verb)
 }
 
 func AlarmProgram(input Code) {
 	cpu := Computer{
-		Halted:             false,
-		InstructionPointer: 0,
-
 		// To do this, before running the program, replace position 1 with the value 12 and replace position 2 with the value 2.
 		Code: input.Adjust(12, 2),
 	}
+	err := cpu.Run()
+	if err != nil {
+		fmt.Println("Part 1", err)
+		return
+	}
+	fmt.Println("Part 1", cpu.Code[0])
+}
 
-	for !cpu.Halted {
-		err := cpu.Step()
-		if err != nil {
-			panic(err)
+func FindNounVerb(input Code, target int64) (noun, verb int64) {
+	for noun := int64(0); noun <= 99; noun++ {
+		for verb := int64(0); verb <= 99; verb++ {
+			cpu := Computer{Code: input.Adjust(noun, verb)}
+
+			err := cpu.Run()
+			if err != nil {
+				fmt.Printf("%d %d failed: %v\n", noun, verb, err)
+				continue
+			}
+
+			if cpu.Code[0] == target {
+				return noun, verb
+			}
 		}
 	}
 
-	fmt.Println("Part 1", cpu.Code[0])
+	return 0, 0
 }
 
 /*
