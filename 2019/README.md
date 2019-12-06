@@ -10,5 +10,5 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |-----|------|--------|----------|
 | 1 | 1 | Success |  |
 | 1 | 2 | Success |  |
-| 2 | 1 | Failure | Computer worked correctly, but missed instructions about changing code before executing. |
+| 2 | 1 | Failure | Computer worked correctly, but missed instructions about changing code before executing. Two lines to fix the bug. |
 | 2 | 2 |  |  |
