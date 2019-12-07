@@ -9,6 +9,22 @@ The goal is to not do any testing of the code. It should work correctly the firs
 | Day | Part | Result | Comments |
 |-----|------|--------|----------|
 | 1 | 1 | Success |  |
-| 1 | 2 | Success |  |
+|   | 2 | Success |  |
 | 2 | 1 | Failure | Computer worked correctly, but missed instructions about changing code before executing. Two lines to fix the bug. |
-| 2 | 2 | Success |  |
+|   | 2 | Success |  |
+| 3 | 1 |  |  |
+|   | 2 |  |  |
+| 4 | 1 |  |  |
+|   | 2 |  |  |
+| 5 | 1 |  |  |
+|   | 2 |  |  |
+| 6 | 1 |  |  |
+|   | 2 |  |  |
+| 7 | 1 |  |  |
+|   | 2 |  |  |
+| 8 | 1 |  |  |
+|   | 2 |  |  |
+| 9 | 1 |  |  |
+|   | 2 |  |  |
+| 10 | 1 |  |  |
+|    | 2 |  |  |
