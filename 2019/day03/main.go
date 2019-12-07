@@ -16,9 +16,13 @@ func main() {
 		return
 	}
 
+	NearestCrossing(WireA, WireB)
+}
+
+func NearestCrossing(wireA, wireB Wire) {
 	var crossings []Vector
-	WireA.Walk(Vector{}, func(a AbsoluteSegment) {
-		WireB.Walk(Vector{}, func(b AbsoluteSegment) {
+	wireA.Walk(Vector{}, func(a AbsoluteSegment, _ int64) {
+		wireB.Walk(Vector{}, func(b AbsoluteSegment, _ int64) {
 			crossing, crossed := Crossing(a, b)
 			if crossed && !crossing.IsZero() {
 				crossings = append(crossings, crossing)
@@ -34,18 +38,52 @@ func main() {
 	fmt.Printf("min %v len %v\n", crossings[0], crossings[0].ManhattanLength())
 }
 
+func SmallestTiming(wireA, wireB Wire) {
+	seen := map[Vector]bool{}
+
+	var smallest Vector
+	var smallestTravel int64 = 1 << 31
+
+	wireA.Walk(Vector{}, func(a AbsoluteSegment, atravel int64) {
+		wireB.Walk(Vector{}, func(b AbsoluteSegment, btravel int64) {
+			crossing, crossed := Crossing(a, b)
+			if !crossed || crossing.IsZero() {
+				return
+			}
+
+			if seen[crossing] {
+				return
+			}
+			seen[crossing] = true
+
+			ax := atravel + a.At.ManhattanDist(crossing)
+			bx := btravel + b.At.ManhattanDist(crossing)
+			travel := ax + bx
+
+			if travel < smallestTravel {
+				smallest = crossing
+				smallestTravel = travel
+			}
+		})
+	})
+
+	fmt.Printf("timing to %v is %v\n", smallest, smallestTravel)
+}
+
 // Wire logic
 
 type Wire []Segment
 
-func (wire Wire) Walk(at Vector, fn func(AbsoluteSegment)) {
+func (wire Wire) Walk(at Vector, fn func(AbsoluteSegment, int64)) {
+	var traveled int64
 	for _, segment := range wire {
 		fn(AbsoluteSegment{
 			At:      at,
 			Segment: segment,
-		})
+		}, traveled)
 
 		at = at.Add(segment.Vector())
+		traveled += segment.Length
 	}
 }
 
