@@ -14,8 +14,8 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |   | 2 | Success |  |
 | 3 | 1 | Success |  |
 |   | 2 | Failure | Code was correct, but forgot to call it from main. |
-| 4 | 1 |  |  |
-|   | 2 |  |  |
+| 4 | 1 | Success |  |
+|   | 2 | Failure | Counted half-clusters. |
 | 5 | 1 |  |  |
 |   | 2 |  |  |
 | 6 | 1 |  |  |
