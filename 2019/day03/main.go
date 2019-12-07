@@ -17,6 +17,7 @@ func main() {
 	}
 
 	NearestCrossing(WireA, WireB)
+	SmallestTiming(WireA, WireB)
 }
 
 func NearestCrossing(wireA, wireB Wire) {

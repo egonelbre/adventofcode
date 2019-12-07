@@ -13,7 +13,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 | 2 | 1 | Failure | Computer worked correctly, but missed instructions about changing code before executing. Two lines to fix the bug. |
 |   | 2 | Success |  |
 | 3 | 1 | Success |  |
-|   | 2 |  |  |
+|   | 2 | Failure | Code was correct, but forgot to call it from main. |
 | 4 | 1 |  |  |
 |   | 2 |  |  |
 | 5 | 1 |  |  |
