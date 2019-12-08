@@ -7,18 +7,44 @@ import (
 )
 
 func main() {
-	const AirConditionUnitID = 1
+	Part1()
+	Part2()
+}
+
+func Part1() {
+	fmt.Println("=== PART 1 ===")
 
 	var cpu *intcode.Computer
 	cpu = &intcode.Computer{
 		Input: func() int64 {
-			return AirConditionUnitID
+			// air condition unit
+			return 1
 		},
 		Output: func(v int64) {
 			fmt.Println("@", cpu.InstructionPointer, v)
 		},
 
-		Code: Input,
+		Code: Input.Clone(),
+	}
+
+	err := cpu.Run()
+	fmt.Println("@", cpu.InstructionPointer, "<finished>", err)
+}
+
+func Part2() {
+	fmt.Println("=== PART 2 ===")
+
+	var cpu *intcode.Computer
+	cpu = &intcode.Computer{
+		Input: func() int64 {
+			// thermal radiator controller
+			return 5
+		},
+		Output: func(v int64) {
+			fmt.Println("@", cpu.InstructionPointer, v)
+		},
+
+		Code: Input.Clone(),
 	}
 
 	err := cpu.Run()
