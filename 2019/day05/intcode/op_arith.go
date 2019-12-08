@@ -58,6 +58,20 @@ type LessThan struct {
 
 func init() { RegisterOp(LessThan{}, OpCode(7)) }
 
+func (op LessThan) Exec(cpu *Computer) error {
+	a, aerr := cpu.ValueOf(op.A)
+	b, berr := cpu.ValueOf(op.B)
+	if aerr != nil || berr != nil {
+		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr, berr)
+	}
+
+	if a < b {
+		return cpu.Store(op.Store, 1)
+	} else {
+		return cpu.Store(op.Store, 0)
+	}
+}
+
 func (LessThan) Decode(code Code) (instr Instr, advance int64, err error) {
 	var op LessThan
 	_, op.A, op.B, op.Store, advance, err = Decode3(code)
@@ -71,6 +85,20 @@ type Equals struct {
 }
 
 func init() { RegisterOp(Equals{}, OpCode(8)) }
+
+func (op Equals) Exec(cpu *Computer) error {
+	a, aerr := cpu.ValueOf(op.A)
+	b, berr := cpu.ValueOf(op.B)
+	if aerr != nil || berr != nil {
+		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr, berr)
+	}
+
+	if a < b {
+		return cpu.Store(op.Store, 1)
+	} else {
+		return cpu.Store(op.Store, 0)
+	}
+}
 
 func (Equals) Decode(code Code) (instr Instr, advance int64, err error) {
 	var op Equals
