@@ -1,5 +1,7 @@
 package intcode
 
+import "fmt"
+
 // cpu.Halted := true
 type Halt struct{}
 
@@ -32,6 +34,17 @@ func (JumpIfTrue) Decode(code Code) (instr Instr, advance int64, err error) {
 	return op, advance, err
 }
 
+func (op JumpIfTrue) Exec(cpu *Computer) error {
+	check, err := cpu.ValueOf(op.Check)
+	if err != nil {
+		return fmt.Errorf("invalid arguments %+v: %v", op, err)
+	}
+	if check != 0 {
+		return cpu.JumpTo(op.Target)
+	}
+	return nil
+}
+
 // if [Check] == 0 then cpu.InstructionPointer := [Store]
 type JumpIfFalse struct {
 	Check  Param
@@ -39,6 +52,17 @@ type JumpIfFalse struct {
 }
 
 func init() { RegisterOp(JumpIfFalse{}, OpCode(6)) }
+
+func (op JumpIfFalse) Exec(cpu *Computer) error {
+	check, err := cpu.ValueOf(op.Check)
+	if err != nil {
+		return fmt.Errorf("invalid arguments %+v: %v", op, err)
+	}
+	if check == 0 {
+		return cpu.JumpTo(op.Target)
+	}
+	return nil
+}
 
 func (JumpIfFalse) Decode(code Code) (instr Instr, advance int64, err error) {
 	var op JumpIfFalse

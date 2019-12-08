@@ -59,6 +59,19 @@ func (cpu *Computer) Store(at Param, value int64) error {
 	return nil
 }
 
+func (cpu *Computer) JumpTo(target Param) error {
+	addr, err := cpu.ValueOf(target)
+	if err != nil {
+		return err
+	}
+	if !cpu.ValidAddress(addr) {
+		return fmt.Errorf("invalid target address %v", addr)
+	}
+
+	cpu.InstructionPointer = addr
+	return nil
+}
+
 func (cpu *Computer) ValidParams(params ...Param) bool {
 	for _, param := range params {
 		if !cpu.ValidParam(param) {
@@ -72,7 +85,11 @@ func (cpu *Computer) ValidParam(param Param) bool {
 	if param.Immediate {
 		return true
 	}
-	return 0 <= param.Value && param.Value < int64(len(cpu.Code))
+	return cpu.ValidAddress(param.Value)
+}
+
+func (cpu *Computer) ValidAddress(addr Address) bool {
+	return 0 <= addr && addr < int64(len(cpu.Code))
 }
 
 func (cpu *Computer) Step() error {
