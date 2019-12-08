@@ -7,6 +7,9 @@ type Computer struct {
 
 	InstructionPointer Address
 
+	Input  func() int64
+	Output func(v int64)
+
 	Code Code
 }
 
@@ -90,17 +93,20 @@ func (op Multiply) Exec(cpu *Computer) error {
 }
 
 func (op Input) Exec(cpu *Computer) error {
-	return cpu.Store(op.Store, cpu.Input())
+	v, err := cpu.ReadInput()
+	if err != nil {
+		return err
+	}
+	return cpu.Store(op.Store, v)
 }
 
 func (op Output) Exec(cpu *Computer) error {
 	a, aerr := cpu.ValueOf(op.Load)
 	if aerr != nil {
-		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr)
+		return fmt.Errorf("invalid arguments %+v: %v", op, aerr)
 	}
 
-	cpu.Output(a)
-	return nil
+	return cpu.WriteOutput(a)
 }
 
 func (op Halt) Exec(cpu *Computer) error {
@@ -166,11 +172,21 @@ func (cpu *Computer) Step() error {
 	return nil
 }
 
-func (cpu *Computer) Input() int64 {
-	return "TODO"
+func (cpu *Computer) ReadInput() (int64, error) {
+	if cpu.Input == nil {
+		return 0, fmt.Errorf("input module missing")
+	}
+
+	return cpu.Input(), nil
 }
-func (cpu *Computer) Output(v int64) {
-	return "TODO"
+
+func (cpu *Computer) WriteOutput(v int64) error {
+	if cpu.Output == nil {
+		return fmt.Errorf("output module missing")
+	}
+
+	cpu.Output(v)
+	return nil
 }
 
 func (cpu *Computer) Run() error {
