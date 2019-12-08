@@ -17,7 +17,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 | 4 | 1 | Success |  |
 |   | 2 | Failure | Counted half-clusters. |
 | 5 | 1 | Success |  |
-|   | 2 |  |  |
+|   | 2 | Failure | Copy-paste mistake, instead of < had == |
 | 6 | 1 |  |  |
 |   | 2 |  |  |
 | 7 | 1 |  |  |

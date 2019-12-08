@@ -93,7 +93,7 @@ func (op Equals) Exec(cpu *Computer) error {
 		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr, berr)
 	}
 
-	if a < b {
+	if a == b {
 		return cpu.Store(op.Store, 1)
 	} else {
 		return cpu.Store(op.Store, 0)
