@@ -167,11 +167,10 @@ func (cpu *Computer) Step() error {
 }
 
 func (cpu *Computer) Input() int64 {
-	// TODO:
-	return 0
+	return "TODO"
 }
 func (cpu *Computer) Output(v int64) {
-	// TODO:
+	return "TODO"
 }
 
 func (cpu *Computer) Run() error {
@@ -189,31 +188,46 @@ func DecodeInstr(code Code) (instr Instr, advance int64, err error) {
 		return Halt{}, 0, fmt.Errorf("code missing")
 	}
 
-	switch OpCode(code[0]) {
+	// ABCDE
+	//  1002
+	//
+	// DE - two digit opcode
+	//  C - mode of 1st param
+	//  B - mode of 2nd param
+	//  A - mode of 3rd param
+
+	full := code[0]
+	opcode := OpCode(full % 100)
+
+	imm1 := 1 == (full/100)%10
+	imm2 := 1 == (full/1000)%10
+	imm3 := 1 == (full/10000)%10
+
+	switch opcode {
 	case OpAdd:
 		if len(code) < 4 {
 			return Halt{}, 0, fmt.Errorf("add requires 3 arguments")
 		}
-		return Add{A: code[1], B: code[2], Store: code[3]}, 4, nil
+		return Add{A: Param{imm1, code[1]}, B: Param{imm2, code[2]}, Store: Param{imm3, code[3]}}, 4, nil
 
 	case OpMultiply:
 		if len(code) < 4 {
 			return Halt{}, 0, fmt.Errorf("multiply requires 3 arguments")
 		}
-		return Multiply{A: code[1], B: code[2], Store: code[3]}, 4, nil
+		return Multiply{A: Param{imm1, code[1]}, B: Param{imm2, code[2]}, Store: Param{imm3, code[3]}}, 4, nil
 
 	case OpInput:
 		if len(code) < 2 {
 			return Halt{}, 0, fmt.Errorf("input requires 1 arguments")
 		}
-		return Input{Store: code[1]}, 2, nil
+		return Input{Store: Param{imm1, code[1]}}, 2, nil
 
 	case OpOutput:
 		if len(code) < 2 {
 			return Halt{}, 0, fmt.Errorf("output requires 1 arguments")
 		}
 
-		return Output{Load: code[1]}, 2, nil
+		return Output{Load: Param{imm1, code[1]}}, 2, nil
 
 	case OpHalt:
 		return Halt{}, 1, nil
