@@ -32,9 +32,17 @@ type OpCode int64
 const (
 	OpAdd      = OpCode(1)
 	OpMultiply = OpCode(2)
-	OpInput    = OpCode(3)
-	OpOutput   = OpCode(4)
-	OpHalt     = OpCode(99)
+
+	OpInput  = OpCode(3)
+	OpOutput = OpCode(4)
+
+	OpJumpIfTrue  = OpCode(5)
+	OpJumpIfFalse = OpCode(6)
+
+	OpLessThan = OpCode(7)
+	OpEquals   = OpCode(8)
+
+	OpHalt = OpCode(99)
 )
 
 type Param struct {
@@ -69,6 +77,29 @@ type (
 		Load Param
 	}
 
+	// if [Check] != 0 then cpu.InstructionPointer := [Store]
+	JumpIfTrue struct {
+		Check  Param
+		Target Param
+	}
+	// if [Check] == 0 then cpu.InstructionPointer := [Store]
+	JumpIfFalse struct {
+		Check  Param
+		Target Param
+	}
+
+	// [Store] := [A] < [B] ? 1 : 0
+	LessThan struct {
+		A, B  Param
+		Store Param
+	}
+	// [Store] := [A] == [B] ? 1 : 0
+	Equals struct {
+		A, B  Param
+		Store Param
+	}
+
+	// cpu.Halted := true
 	Halt struct{}
 )
 
@@ -224,26 +255,80 @@ func DecodeInstr(code Code) (instr Instr, advance int64, err error) {
 		if len(code) < 4 {
 			return Halt{}, 0, fmt.Errorf("add requires 3 arguments")
 		}
-		return Add{A: Param{imm1, code[1]}, B: Param{imm2, code[2]}, Store: Param{imm3, code[3]}}, 4, nil
+		return Add{
+			A:     Param{imm1, code[1]},
+			B:     Param{imm2, code[2]},
+			Store: Param{imm3, code[3]},
+		}, 4, nil
 
 	case OpMultiply:
 		if len(code) < 4 {
 			return Halt{}, 0, fmt.Errorf("multiply requires 3 arguments")
 		}
-		return Multiply{A: Param{imm1, code[1]}, B: Param{imm2, code[2]}, Store: Param{imm3, code[3]}}, 4, nil
+		return Multiply{
+			A:     Param{imm1, code[1]},
+			B:     Param{imm2, code[2]},
+			Store: Param{imm3, code[3]},
+		}, 4, nil
 
 	case OpInput:
 		if len(code) < 2 {
 			return Halt{}, 0, fmt.Errorf("input requires 1 arguments")
 		}
-		return Input{Store: Param{imm1, code[1]}}, 2, nil
+		return Input{
+			Store: Param{imm1, code[1]},
+		}, 2, nil
 
 	case OpOutput:
 		if len(code) < 2 {
 			return Halt{}, 0, fmt.Errorf("output requires 1 arguments")
 		}
 
-		return Output{Load: Param{imm1, code[1]}}, 2, nil
+		return Output{
+			Load: Param{imm1, code[1]},
+		}, 2, nil
+
+	case OpJumpIfTrue:
+		if len(code) < 3 {
+			return Halt{}, 0, fmt.Errorf("jump-if-true requires 2 arguments")
+		}
+
+		return JumpIfTrue{
+			Check:  Param{imm1, code[1]},
+			Target: Param{imm2, code[2]},
+		}, 3, nil
+
+	case OpJumpIfFalse:
+		if len(code) < 3 {
+			return Halt{}, 0, fmt.Errorf("jump-if-false requires 2 arguments")
+		}
+
+		return JumpIfFalse{
+			Check:  Param{imm1, code[1]},
+			Target: Param{imm2, code[2]},
+		}, 3, nil
+
+	case OpLessThan:
+		if len(code) < 4 {
+			return Halt{}, 0, fmt.Errorf("less-than requires 3 arguments")
+		}
+
+		return LessThan{
+			A:     Param{imm1, code[1]},
+			B:     Param{imm2, code[2]},
+			Store: Param{imm3, code[3]},
+		}, 4, nil
+
+	case OpEquals:
+		if len(code) < 4 {
+			return Halt{}, 0, fmt.Errorf("equls requires 3 arguments")
+		}
+
+		return Equals{
+			A:     Param{imm1, code[1]},
+			B:     Param{imm2, code[2]},
+			Store: Param{imm3, code[3]},
+		}, 4, nil
 
 	case OpHalt:
 		return Halt{}, 1, nil
