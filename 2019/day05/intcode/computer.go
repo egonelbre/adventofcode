@@ -34,6 +34,11 @@ const (
 	OpHalt     = OpCode(99)
 )
 
+type Param struct {
+	Immediate bool
+	Value     Address
+}
+
 type (
 	Instr interface {
 		Exec(cpu *Computer) error
@@ -41,66 +46,60 @@ type (
 
 	// [Store] := [A] + [B]
 	Add struct {
-		A, B  Address
-		Store Address
+		A, B  Param
+		Store Param
 	}
 
 	// [Store] := [A] * [B]
 	Multiply struct {
-		A, B  Address
-		Store Address
+		A, B  Param
+		Store Param
 	}
 
 	// [Store] := <-input
 	Input struct {
-		Store Address
+		Store Param
 	}
 
 	// output <- [Load]
 	Output struct {
-		Load Address
+		Load Param
 	}
 
 	Halt struct{}
 )
 
 func (op Add) Exec(cpu *Computer) error {
-	if !cpu.ValidAddresses(op.A, op.B, op.Store) {
-		return fmt.Errorf("invalid address %+v", op)
+	a, aerr := cpu.ValueOf(op.A)
+	b, berr := cpu.ValueOf(op.B)
+	if aerr != nil || berr != nil {
+		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr, berr)
 	}
 
-	cpu.Code[op.Store] = cpu.Code[op.A] + cpu.Code[op.B]
-
-	return nil
+	return cpu.Store(op.Store, a+b)
 }
 
 func (op Multiply) Exec(cpu *Computer) error {
-	if !cpu.ValidAddresses(op.A, op.B, op.Store) {
-		return fmt.Errorf("invalid address %+v", op)
+	a, aerr := cpu.ValueOf(op.A)
+	b, berr := cpu.ValueOf(op.B)
+	if aerr != nil || berr != nil {
+		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr, berr)
 	}
 
-	cpu.Code[op.Store] = cpu.Code[op.A] * cpu.Code[op.B]
-
-	return nil
+	return cpu.Store(op.Store, a*b)
 }
 
 func (op Input) Exec(cpu *Computer) error {
-	if !cpu.ValidAddresses(op.Store) {
-		return fmt.Errorf("invalid address %+v", op)
-	}
-
-	cpu.Code[op.Store] = cpu.Input()
-
-	return nil
+	return cpu.Store(op.Store, cpu.Input())
 }
 
 func (op Output) Exec(cpu *Computer) error {
-	if !cpu.ValidAddresses(op.Load) {
-		return fmt.Errorf("invalid address %+v", op)
+	a, aerr := cpu.ValueOf(op.Load)
+	if aerr != nil {
+		return fmt.Errorf("invalid arguments %+v: %v, %v", op, aerr)
 	}
 
-	cpu.Output(cpu.Code[op.Load])
-
+	cpu.Output(a)
 	return nil
 }
 
@@ -109,17 +108,41 @@ func (op Halt) Exec(cpu *Computer) error {
 	return nil
 }
 
-func (cpu *Computer) ValidAddresses(addrs ...Address) bool {
-	for _, addr := range addrs {
-		if !cpu.ValidAddress(addr) {
+func (cpu *Computer) ValueOf(p Param) (int64, error) {
+	if p.Immediate {
+		return p.Value, nil
+	}
+	if !cpu.ValidParam(p) {
+		return 0, fmt.Errorf("invalid param %v", p)
+	}
+	return cpu.Code[p.Value], nil
+}
+
+func (cpu *Computer) Store(at Param, value int64) error {
+	if at.Immediate {
+		return fmt.Errorf("cannot store at immediate %+v", at)
+	}
+	if !cpu.ValidParam(at) {
+		return fmt.Errorf("invalid store address %+v", at)
+	}
+	cpu.Code[at.Value] = value
+	return nil
+}
+
+func (cpu *Computer) ValidParams(params ...Param) bool {
+	for _, param := range params {
+		if !cpu.ValidParam(param) {
 			return false
 		}
 	}
 	return true
 }
 
-func (cpu *Computer) ValidAddress(addr Address) bool {
-	return 0 <= addr && addr < int64(len(cpu.Code))
+func (cpu *Computer) ValidParam(param Param) bool {
+	if param.Immediate {
+		return true
+	}
+	return 0 <= param.Value && param.Value < int64(len(cpu.Code))
 }
 
 func (cpu *Computer) Step() error {
@@ -178,6 +201,19 @@ func DecodeInstr(code Code) (instr Instr, advance int64, err error) {
 			return Halt{}, 0, fmt.Errorf("multiply requires 3 arguments")
 		}
 		return Multiply{A: code[1], B: code[2], Store: code[3]}, 4, nil
+
+	case OpInput:
+		if len(code) < 2 {
+			return Halt{}, 0, fmt.Errorf("input requires 1 arguments")
+		}
+		return Input{Store: code[1]}, 2, nil
+
+	case OpOutput:
+		if len(code) < 2 {
+			return Halt{}, 0, fmt.Errorf("output requires 1 arguments")
+		}
+
+		return Output{Load: code[1]}, 2, nil
 
 	case OpHalt:
 		return Halt{}, 1, nil
