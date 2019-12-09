@@ -20,7 +20,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Failure | Copy-paste mistake, instead of `==` had `<` in equals implementation. |
 |   6 |   1  | Success |  |
 |     |   2  | Success |  |
-|   7 |   1  |         |  |
+|   7 |   1  | Success |  |
 |     |   2  |         |  |
 |   8 |   1  |         |  |
 |     |   2  |         |  |
