@@ -18,7 +18,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Failure | Counted half-clusters. |
 |   5 |   1  | Success |  |
 |     |   2  | Failure | Copy-paste mistake, instead of `==` had `<` in equals implementation. |
-|   6 |   1  |         |  |
+|   6 |   1  | Success |  |
 |     |   2  |         |  |
 |   7 |   1  |         |  |
 |     |   2  |         |  |
