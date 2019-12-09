@@ -13,6 +13,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	// PART 1
+
 	com, ok := universe.ObjectByName["COM"]
 	if !ok {
 		fmt.Fprintf(os.Stderr, "COM not found\n")
@@ -27,6 +29,29 @@ func main() {
 
 	fmt.Println("total objects", len(universe.Objects))
 	fmt.Println("total direct and indirect orbits", indirect.Total())
+
+	// PART 2
+	you, ok := universe.ObjectByName["YOU"]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "YOU not found\n")
+		os.Exit(1)
+	}
+
+	san, ok := universe.ObjectByName["SAN"]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "SAN not found\n")
+		os.Exit(1)
+	}
+
+	common := CommonAncestor(you, san)
+	if common == nil {
+		fmt.Fprintf(os.Stderr, "did not find common ancestor\n")
+		os.Exit(1)
+	}
+
+	youtx := indirect[you] - indirect[common] - 1
+	santx := indirect[san] - indirect[common] - 1
+	fmt.Println("Minimum transfers from YOU to SAN", youtx+santx)
 }
 
 type IndirectOrbits map[*Object]int64
@@ -104,7 +129,7 @@ func (universe *Universe) EnsureObject(name string) *Object {
 type Object struct {
 	Name string
 
-	Planets    []*Object
+	Planet     *Object
 	Satellites []*Object
 }
 
@@ -123,5 +148,16 @@ func (planet *Object) EnsureSatellite(satellite *Object) {
 	}
 
 	planet.Satellites = append(planet.Satellites, satellite)
-	satellite.Planets = append(satellite.Planets, planet)
+	satellite.Planet = planet
+}
+
+func CommonAncestor(a, b *Object) *Object {
+	for ax := a.Planet; ax != nil; ax = ax.Planet {
+		for bx := b.Planet; bx != nil; bx = bx.Planet {
+			if bx == ax {
+				return ax
+			}
+		}
+	}
+	return nil
 }

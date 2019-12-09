@@ -19,7 +19,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |   5 |   1  | Success |  |
 |     |   2  | Failure | Copy-paste mistake, instead of `==` had `<` in equals implementation. |
 |   6 |   1  | Success |  |
-|     |   2  |         |  |
+|     |   2  | Success |  |
 |   7 |   1  |         |  |
 |     |   2  |         |  |
 |   8 |   1  |         |  |
