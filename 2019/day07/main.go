@@ -8,6 +8,12 @@ import (
 )
 
 func main() {
+	best := Feedforward()
+	Feedback(best)
+}
+
+// part 1
+func Feedforward() []int {
 	cache := Cache{}
 
 	var best [5]int
@@ -30,6 +36,81 @@ func main() {
 	})
 
 	fmt.Println("phases", best, "max output", maxOutput)
+	return best[:]
+}
+
+// part 2
+func Feedback(phases []int) {
+	var maxOutput int64
+
+	cpus := make([]*intcode.Computer, len(phases))
+	for i, phase := range phases {
+		cpus[i] = &intcode.Computer{
+			Input:  nil,
+			Output: nil,
+			Code:   AmplifierControllerSoftware.Clone(),
+		}
+
+		err := SetPhase(cpus[i], int64(phase))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed setting phase %v: %v\n", phases, err)
+			return
+		}
+	}
+
+	var signal int64
+feedback:
+	for {
+		for i, cpu := range cpus {
+			output, ok, err := Feed(cpu, signal)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "cpu failed setting input %d: %v\n", i, err)
+				break feedback
+			}
+
+			signal = output
+			if !ok {
+				fmt.Fprintf(os.Stderr, "cpu %d finished: %v\n", i, err)
+				break feedback
+			}
+		}
+
+		if signal > maxOutput {
+			maxOutput = signal
+		}
+
+		fmt.Println(signal)
+	}
+
+	fmt.Println("max feedback output", maxOutput)
+}
+
+func SetPhase(cpu *intcode.Computer, phase int64) error {
+	cpu.Halted = false
+
+	cpu.Input = func() int64 {
+		cpu.Halted = true
+		return phase
+	}
+	cpu.Output = nil
+
+	return cpu.Run()
+}
+
+func Feed(cpu *intcode.Computer, input int64) (output int64, ok bool, err error) {
+	cpu.Halted = false
+
+	cpu.Input = func() int64 {
+		return input
+	}
+	cpu.Output = func(v int64) {
+		cpu.Halted = true
+		output = v
+		ok = true
+	}
+
+	err = cpu.Run()
+	return output, ok, err
 }
 
 // Permutations implements Heap's algorithm.

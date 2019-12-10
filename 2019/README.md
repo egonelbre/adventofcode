@@ -21,7 +21,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |   6 |   1  | Success |  |
 |     |   2  | Success |  |
 |   7 |   1  | Success |  |
-|     |   2  |         |  |
+|     |   2  | Failure | Misread the assignment and thought the output should be once the amplifiers finish amplifying instead of running max output from all phases. |
 |   8 |   1  |         |  |
 |     |   2  |         |  |
 |   9 |   1  |         |  |
