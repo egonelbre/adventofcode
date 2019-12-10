@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	best := Feedforward()
-	Feedback(best)
+	Feedforward()
+	Feedback()
 }
 
 // part 1
-func Feedforward() []int {
+func Feedforward() {
 	cache := Cache{}
 
 	var best [5]int
@@ -36,53 +36,53 @@ func Feedforward() []int {
 	})
 
 	fmt.Println("phases", best, "max output", maxOutput)
-	return best[:]
 }
 
 // part 2
-func Feedback(phases []int) {
+func Feedback() {
+	var best [5]int
 	var maxOutput int64
 
-	cpus := make([]*intcode.Computer, len(phases))
-	for i, phase := range phases {
-		cpus[i] = &intcode.Computer{
-			Input:  nil,
-			Output: nil,
-			Code:   AmplifierControllerSoftware.Clone(),
-		}
+	Permutations(5, []int{5, 6, 7, 8, 9}, func(phases []int) {
+		cpus := make([]*intcode.Computer, len(phases))
+		for i, phase := range phases {
+			cpus[i] = &intcode.Computer{
+				Input:  nil,
+				Output: nil,
+				Code:   AmplifierControllerSoftware.Clone(),
+			}
 
-		err := SetPhase(cpus[i], int64(phase))
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed setting phase %v: %v\n", phases, err)
-			return
-		}
-	}
-
-	var signal int64
-feedback:
-	for {
-		for i, cpu := range cpus {
-			output, ok, err := Feed(cpu, signal)
+			err := SetPhase(cpus[i], int64(phase))
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "cpu failed setting input %d: %v\n", i, err)
-				break feedback
-			}
-
-			signal = output
-			if !ok {
-				fmt.Fprintf(os.Stderr, "cpu %d finished: %v\n", i, err)
-				break feedback
+				fmt.Fprintf(os.Stderr, "failed setting phase %v: %v\n", phases, err)
+				return
 			}
 		}
 
-		if signal > maxOutput {
-			maxOutput = signal
+		var signal int64
+	feedback:
+		for {
+			for i, cpu := range cpus {
+				output, ok, err := Feed(cpu, signal)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "cpu failed setting input %d: %v\n", i, err)
+					break feedback
+				}
+
+				signal = output
+				if !ok {
+					break feedback
+				}
+			}
+
+			if signal > maxOutput {
+				maxOutput = signal
+				copy(best[:], phases)
+			}
 		}
+	})
 
-		fmt.Println(signal)
-	}
-
-	fmt.Println("max feedback output", maxOutput)
+	fmt.Println("best", best, "max feedback output", maxOutput)
 }
 
 func SetPhase(cpu *intcode.Computer, phase int64) error {
