@@ -43,7 +43,9 @@ const (
 
 func NewImage(width, height int64) *Image {
 	return &Image{
-		Data: make([]byte, width*height),
+		Data:   make([]byte, width*height),
+		Width:  width,
+		Height: height,
 	}
 }
 
@@ -67,7 +69,7 @@ func (image *Image) Print() {
 			var c = image.Data[image.Index(x, y)]
 			switch c {
 			case Black:
-				fmt.Print("#")
+				fmt.Print("█")
 			case White:
 				fmt.Print(" ")
 			case Transparent:
@@ -79,7 +81,7 @@ func (image *Image) Print() {
 }
 
 func (image *Image) Index(x, y int64) int64 {
-	return image.Height*y + x
+	return image.Width*y + x
 }
 
 func (image *Image) Count(b Color) int64 {
