@@ -22,7 +22,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Success |  |
 |   7 |   1  | Success |  |
 |     |   2  | Failure | Misread the assignment and thought the output should be once the amplifiers finish amplifying instead of running max output from all phases. Also missed that part 2 used different phase values. Also it seems, it was across all permutations of phase inputs. |
-|   8 |   1  |         |  |
+|   8 |   1  | Success |  |
 |     |   2  |         |  |
 |   9 |   1  |         |  |
 |     |   2  |         |  |
