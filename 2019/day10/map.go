@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -18,6 +19,14 @@ func (a Vector) Add(b Vector) Vector {
 }
 func (a Vector) Sub(b Vector) Vector {
 	return Vector{a.X - b.X, a.Y - b.Y}
+}
+func (a Vector) SquareLength() int64 {
+	return a.X*a.X + a.Y*a.Y
+}
+func (a Vector) Angle() float64 {
+	tx := float64(a.X)
+	ty := float64(a.Y)
+	return math.Atan2(-tx, ty)
 }
 
 type Map struct {
