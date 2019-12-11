@@ -25,7 +25,12 @@ func (code Code) Clone() Code {
 }
 
 func (code *Code) ResizeTo(addr Address) {
-	*code = append(*code, make(Code, addr-int64(len(*code)))...)
+	if addr < int64(len(*code)) {
+		return
+	}
+
+	increaseBy := addr + 1 - int64(len(*code))
+	*code = append(*code, make(Code, increaseBy)...)
 }
 
 func (code Code) Adjust(noun, verb int64) Code {
@@ -89,9 +94,7 @@ func (cpu *Computer) Store(at Param, value int64) error {
 		if addr < 0 {
 			return fmt.Errorf("invalid address %v", at)
 		}
-		if addr >= int64(len(cpu.Code)) {
-			cpu.Code.ResizeTo(addr)
-		}
+		cpu.Code.ResizeTo(addr)
 		cpu.Code[addr] = value
 		return nil
 	case Relative:
@@ -99,9 +102,7 @@ func (cpu *Computer) Store(at Param, value int64) error {
 		if addr < 0 {
 			return fmt.Errorf("invalid address %v", at)
 		}
-		if addr >= int64(len(cpu.Code)) {
-			cpu.Code.ResizeTo(addr)
-		}
+		cpu.Code.ResizeTo(addr)
 		cpu.Code[addr] = value
 		return nil
 	default:

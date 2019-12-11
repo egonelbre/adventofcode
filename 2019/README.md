@@ -24,7 +24,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Failure | Misread the assignment and thought the output should be once the amplifiers finish amplifying instead of running max output from all phases. Also missed that part 2 used different phase values. Also it seems, it was across all permutations of phase inputs. |
 |   8 |   1  | Success |  |
 |     |   2  | Failure | Forgot to set Width, Height in constructor and in `Index` used `y * image.Height`. |
-|   9 |   1  |         |  |
+|   9 |   1  | Failure | Off by one error in setting code length. |
 |     |   2  |         |  |
 |  10 |   1  |         |  |
 |     |   2  |         |  |
