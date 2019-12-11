@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/egonelbre/adventofcode/2019/day11/intcode"
 )
@@ -12,26 +11,67 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	err = Paint()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func CountPanels() error {
+	panels := map[Vector]int64{}
+	err := RunRobot(panels)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("panels painted", len(panels))
+	return nil
+}
+
+func Paint() error {
+	panels := map[Vector]int64{}
+	panels[Vector{0, 0}] = 1
+
+	err := RunRobot(panels)
+	if err != nil {
+		return err
+	}
+
+	min, max := Vector{}, Vector{}
+	for panel := range panels {
+		min = min.Min(panel)
+		max = max.Max(panel)
+	}
+	size := max.Sub(min).Add(Vector{1, 1})
+
+	image := NewImage(size)
+	for panel, color := range panels {
+		image.Set(panel.Sub(min), Color(color))
+	}
+
+	image.Print()
+
+	return nil
+}
+
+func RunRobot(panels map[Vector]int64) error {
 	cpu := &intcode.Computer{
 		Code: Painter.Clone(),
 	}
 
 	dir := Vector{0, -1}
 	at := Vector{0, 0}
-	colors := map[Vector]int64{}
 
 	for {
-		color := colors[at]
+		color := panels[at]
 
 		ok, err := WriteValue(cpu, color)
 		if err != nil {
 			return fmt.Errorf("failed to write: %w", err)
 		}
 		if !ok {
-			break
+			return nil
 		}
 
 		paint, ok, err := ReadValue(cpu)
@@ -39,17 +79,17 @@ func CountPanels() error {
 			return fmt.Errorf("failed to read paint: %w", err)
 		}
 		if !ok {
-			break
+			return nil
 		}
 
-		colors[at] = paint
+		panels[at] = paint
 
 		rotate, ok, err := ReadValue(cpu)
 		if err != nil {
 			return fmt.Errorf("failed to read rotate: %w", err)
 		}
 		if !ok {
-			break
+			return nil
 		}
 
 		if rotate == 0 {
@@ -60,9 +100,6 @@ func CountPanels() error {
 
 		at = at.Add(dir)
 	}
-
-	fmt.Println("panels painted", len(colors))
-	return nil
 }
 
 func WriteValue(cpu *intcode.Computer, value int64) (ok bool, err error) {
@@ -91,35 +128,4 @@ func ReadValue(cpu *intcode.Computer) (output int64, ok bool, err error) {
 
 	err = cpu.Run()
 	return output, ok, err
-}
-
-type Vector struct {
-	X, Y int64
-}
-
-func (a Vector) IsZero() bool {
-	return a == Vector{}
-}
-
-func (a Vector) Add(b Vector) Vector {
-	return Vector{a.X + b.X, a.Y + b.Y}
-}
-func (a Vector) Sub(b Vector) Vector {
-	return Vector{a.X - b.X, a.Y - b.Y}
-}
-func (a Vector) SquareLength() int64 {
-	return a.X*a.X + a.Y*a.Y
-}
-func (a Vector) Angle() float64 {
-	tx := float64(a.X)
-	ty := float64(a.Y)
-	return math.Atan2(-tx, ty)
-}
-
-func RotateLeft(v Vector) Vector {
-	return Vector{v.Y, -v.X}
-}
-
-func RotateRight(v Vector) Vector {
-	return Vector{-v.Y, v.X}
 }

@@ -69,9 +69,9 @@ func (image *Image) Print() {
 			var c = image.Data[image.Index(x, y)]
 			switch c {
 			case Black:
-				fmt.Print("█")
-			case White:
 				fmt.Print(" ")
+			case White:
+				fmt.Print("█")
 			case Transparent:
 				fmt.Print("?")
 			}
