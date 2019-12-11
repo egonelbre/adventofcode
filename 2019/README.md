@@ -28,3 +28,33 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Success |  |
 |  10 |   1  | Failure | Tired. Counted from non-asteroids. Miscalculated prime offsets. |
 |     |   2  | Failure | Out-of-bounds. Wrong Angle implementation for the orientation. |
+|  11 |   1  |         |  |
+|     |   2  |         |  |
+|  12 |   1  |         |  |
+|     |   2  |         |  |
+|  13 |   1  |         |  |
+|     |   2  |         |  |
+|  14 |   1  |         |  |
+|     |   2  |         |  |
+|  15 |   1  |         |  |
+|     |   2  |         |  |
+|  16 |   1  |         |  |
+|     |   2  |         |  |
+|  17 |   1  |         |  |
+|     |   2  |         |  |
+|  18 |   1  |         |  |
+|     |   2  |         |  |
+|  19 |   1  |         |  |
+|     |   2  |         |  |
+|  20 |   1  |         |  |
+|     |   2  |         |  |
+|  21 |   1  |         |  |
+|     |   2  |         |  |
+|  22 |   1  |         |  |
+|     |   2  |         |  |
+|  23 |   1  |         |  |
+|     |   2  |         |  |
+|  24 |   1  |         |  |
+|     |   2  |         |  |
+|  25 |   1  |         |  |
+|     |   2  |         |  |
