@@ -12,7 +12,7 @@ func main() {
 	WireA, aerr := ParseWire(InputA)
 	WireB, berr := ParseWire(InputB)
 	if aerr != nil || berr != nil {
-		fmt.Fprintf(os.Stderr, "failed to parse input", aerr, berr)
+		fmt.Fprintf(os.Stderr, "failed to parse input: %v, %v\n", aerr, berr)
 		return
 	}
 
