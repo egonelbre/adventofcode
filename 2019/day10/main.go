@@ -18,8 +18,12 @@ func main() {
 		{0, 1},
 		{0, -1},
 	}
-	for _, x := range Primes {
-		for _, y := range Primes {
+	for y := int64(1); y < space.Size.Y; y++ {
+		for x := int64(1); x < space.Size.X; x++ {
+			if GCD(x, y) != 1 {
+				continue
+			}
+
 			offsets = append(offsets,
 				Vector{x, y},
 				Vector{x, -y},
@@ -36,6 +40,10 @@ func main() {
 
 	for y := int64(0); y < space.Size.Y; y++ {
 		for x := int64(0); x < space.Size.X; x++ {
+			if space.At(Vector{x, y}) != Asteroid {
+				continue
+			}
+
 			score := CountAsteroids(space, Vector{x, y}, offsets)
 			if score > best.Score {
 				best.X, best.Y = x, y
@@ -62,4 +70,19 @@ func CountAsteroids(space *Map, at Vector, offsets []Vector) int64 {
 	return count
 }
 
-var Primes = []int64{1, 2, 3, 5, 7, 11, 13, 17, 19}
+func GCD(a, b int64) int64 {
+	if a < 0 {
+		a = -a
+	}
+	if b < 0 {
+		b = -b
+	}
+	for a != b {
+		if a > b {
+			a -= b
+		} else {
+			b -= a
+		}
+	}
+	return a
+}
