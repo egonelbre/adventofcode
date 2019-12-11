@@ -28,7 +28,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Success |  |
 |  10 |   1  | Failure | Tired. Counted from non-asteroids. Miscalculated prime offsets. |
 |     |   2  | Failure | Out-of-bounds. Wrong Angle implementation for the orientation. |
-|  11 |   1  |         |  |
+|  11 |   1  | Success |  |
 |     |   2  |         |  |
 |  12 |   1  |         |  |
 |     |   2  |         |  |
