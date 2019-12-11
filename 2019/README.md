@@ -25,6 +25,6 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |   8 |   1  | Success |  |
 |     |   2  | Failure | Forgot to set Width, Height in constructor and in `Index` used `y * image.Height`. |
 |   9 |   1  | Failure | Off by one error in setting code length. |
-|     |   2  |         |  |
+|     |   2  | Success |  |
 |  10 |   1  |         |  |
 |     |   2  |         |  |
