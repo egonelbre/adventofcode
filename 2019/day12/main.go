@@ -25,22 +25,34 @@ func main() {
 }
 
 func Convergence(moons []Moon) int64 {
-	var state [4]Moon
-	copy(state[:], moons)
+	var x [4]Dimension
+	var y [4]Dimension
+	var z [4]Dimension
 
-	seen := map[[4]Moon]struct{}{}
+	for i, moon := range moons {
+		x[i].Pos, x[i].Vel = moon.Pos.X, moon.Vel.X
+		y[i].Pos, y[i].Vel = moon.Pos.Y, moon.Vel.Y
+		z[i].Pos, z[i].Vel = moon.Pos.Z, moon.Vel.Z
+	}
 
+	xconv := DimensionConvergence(x)
+	yconv := DimensionConvergence(y)
+	zconv := DimensionConvergence(z)
+
+	return LCM(xconv, LCM(yconv, zconv))
+}
+
+func DimensionConvergence(moons [4]Dimension) int64 {
+	seen := map[[4]Dimension]struct{}{}
 	step := int64(0)
+
 	for {
-		if step%100000 == 0 {
-			PrintState(int32(step), state[:])
-		}
-		if _, ok := seen[state]; ok {
+		if _, ok := seen[moons]; ok {
 			return step
 		}
-		seen[state] = struct{}{}
+		seen[moons] = struct{}{}
 
-		Step(state[:])
+		StepDimension(moons[:])
 		step++
 	}
 }
@@ -63,6 +75,29 @@ func Step(moons []Moon) {
 	for i := range moons {
 		moon := &moons[i]
 		moon.Pos = moon.Pos.Add(moon.Vel)
+	}
+}
+
+type Dimension struct {
+	Pos int32
+	Vel int32
+}
+
+func StepDimension(moons []Dimension) {
+	for i := range moons {
+		pos := moons[i].Pos
+
+		force := int32(0)
+		for k := range moons {
+			gravity := Sign(moons[k].Pos - pos)
+			force = force + gravity
+		}
+
+		moons[i].Vel += force
+	}
+
+	for i := range moons {
+		moons[i].Pos += moons[i].Vel
 	}
 }
 
@@ -141,4 +176,19 @@ func Abs(v int32) int32 {
 		return -v
 	}
 	return v
+}
+
+func GCD(a, b int64) int64 {
+	for a != b {
+		if a > b {
+			a -= b
+		} else {
+			b -= a
+		}
+	}
+	return a
+}
+
+func LCM(a, b int64) int64 {
+	return a * b / GCD(a, b)
 }
