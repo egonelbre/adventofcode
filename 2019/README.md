@@ -31,7 +31,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |  11 |   1  | Success |  |
 |     |   2  | Failure | Off by one error in calculating image size. |
 |  12 |   1  | Failure | Instead of `k` used `i` in loop. Integrated during velocity calculation. |
-|     |   2  |         |  |
+|     |   2  | Failure | Too slow. |
 |  13 |   1  |         |  |
 |     |   2  |         |  |
 |  14 |   1  |         |  |
