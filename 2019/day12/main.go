@@ -24,9 +24,6 @@ func Step(moons []Moon) {
 
 		force := Vector{}
 		for k := range moons {
-			if i == k {
-				continue
-			}
 			target := &moons[k]
 			gravity := target.Pos.Sub(pos).Sign()
 			force = force.Add(gravity)
@@ -34,6 +31,10 @@ func Step(moons []Moon) {
 
 		moon := &moons[i]
 		moon.Vel = moon.Vel.Add(force)
+	}
+
+	for i := range moons {
+		moon := &moons[i]
 		moon.Pos = moon.Pos.Add(moon.Vel)
 	}
 }
