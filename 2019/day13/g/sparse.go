@@ -44,12 +44,20 @@ func (m *SparseImage) Image() *Image {
 	return n
 }
 
-func (m *SparseImage) Count(b Color) int64 {
-	var count int64
+func (m *SparseImage) Count(b Color) (count int64) {
 	for _, v := range m.Data {
 		if v == b {
 			count++
 		}
 	}
 	return count
+}
+
+func (m *SparseImage) Find(b Color) (Vector, bool) {
+	for at, v := range m.Data {
+		if v == b {
+			return at, true
+		}
+	}
+	return Vector{}, false
 }

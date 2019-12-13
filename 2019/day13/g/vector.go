@@ -39,6 +39,13 @@ func (a Vector) Max(b Vector) Vector {
 	}
 }
 
+func (a Vector) Sign() Vector {
+	return Vector{
+		X: Sign(a.X),
+		Y: Sign(a.Y),
+	}
+}
+
 func RotateLeft(v Vector) Vector {
 	return Vector{v.Y, -v.X}
 }
