@@ -30,10 +30,13 @@ func Parse(input string) (*Reactions, error) {
 				return nil, fmt.Errorf("invalid line %q, chem %q", line, chemstr)
 			}
 
-			chemicals = append(chemicals, Chemical{chemstr[2], count})
+			chemicals = append(chemicals, Chemical{
+				Name:  chemstr[2],
+				Count: int64(count),
+			})
 		}
 
-		last := len(chemstrs) - 1
+		last := len(chemicals) - 1
 		reactions.Add(Reaction{
 			Input:  chemicals[:last],
 			Output: chemicals[last],

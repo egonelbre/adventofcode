@@ -34,7 +34,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Failure | Too slow. |
 |  13 |   1  | Success |  |
 |     |   2  | Failure | Tried to "insert coins" through input instead of modifying code. Used return in output which didn't bump out. |
-|  14 |   1  |         |  |
+|  14 |   1  | Failure | Forgot `needs[reaction.Output.Name] = dep` |
 |     |   2  |         |  |
 |  15 |   1  |         |  |
 |     |   2  |         |  |
