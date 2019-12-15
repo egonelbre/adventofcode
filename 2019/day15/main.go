@@ -166,7 +166,6 @@ func (search *Search) Run() error {
 			search.AddExplore(nextat, traveled)
 
 			fmt.Println("found oxygen", traveled)
-			return nil
 		}
 	}
 }
