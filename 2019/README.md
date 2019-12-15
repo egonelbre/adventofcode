@@ -36,7 +36,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Failure | Tried to "insert coins" through input instead of modifying code. Used return in output which didn't bump out. |
 |  14 |   1  | Failure | Forgot `needs[reaction.Output.Name] = dep` |
 |     |   2  | Failure | Assumed was going to be `ore / min ore per fuel` |
-|  15 |   1  |         |  |
+|  15 |   1  | Failure | Off-by-one when defining directions, should have started from `1`. |
 |     |   2  |         |  |
 |  16 |   1  |         |  |
 |     |   2  |         |  |
