@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/egonelbre/adventofcode/2019/day15/g"
 	"github.com/egonelbre/adventofcode/2019/day15/intcode"
@@ -77,8 +78,14 @@ func main() {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-
 	search.Map.Image().Print(colors)
+
+	oxygenAt, ok := search.Map.Find(Oxygen)
+	if !ok {
+		fmt.Fprintln(os.Stderr, "did not find oxygen")
+	}
+	flood := NewFlood(search.Map, oxygenAt)
+	flood.Run()
 }
 
 type Search struct {
@@ -192,4 +199,59 @@ func Explore(code intcode.Code, at g.Vector, action Action) (Status, intcode.Cod
 	}
 
 	return output, cpu.Code, nil
+}
+
+type Flood struct {
+	Map   *g.SparseImage
+	Queue PendingActionQueue
+}
+
+func NewFlood(m *g.SparseImage, startAt g.Vector) *Flood {
+	flood := &Flood{
+		Map: m,
+	}
+
+	flood.AddExplore(startAt, 0)
+
+	return flood
+}
+
+func (flood *Flood) AddExplore(at g.Vector, traveled int64) {
+	for action := GoNorth; action <= GoEast; action++ {
+		expect := flood.Map.At(at.Add(Movement(action)))
+		if expect != Empty {
+			continue
+		}
+
+		flood.Queue.Enqueue(at, action, traveled)
+	}
+}
+
+func (flood *Flood) Run() {
+	var max int64
+	for {
+		act, ok := flood.Queue.Dequeue()
+		if !ok {
+			// because flooding travel is predictive
+			fmt.Println("max traveled", max+1)
+			return
+		}
+		if max < act.Traveled && false {
+			print("\033[H\033[2J")
+			fmt.Println("Minute", act.Traveled)
+			flood.Map.Image().Print(colors)
+			time.Sleep(100 * time.Millisecond)
+		}
+		max = g.Max(max, act.Traveled)
+
+		nextat := act.At.Add(Movement(act.Action))
+		traveled := act.Traveled + 1
+
+		if flood.Map.At(nextat) != Empty {
+			continue
+		}
+
+		flood.Map.Set(act.At, Oxygen)
+		flood.AddExplore(nextat, traveled)
+	}
 }
