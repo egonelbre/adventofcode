@@ -1,15 +1,31 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"log"
+	"os"
+	"runtime/pprof"
+)
+
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 
 func main() {
-	pattern := []int8{0, 1, 0, -1}
-	for i := 0; i < 8; i++ {
-		for k := 0; k < 8; k++ {
-			fmt.Printf("%3d", Repeat(pattern, i, k))
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal("could not create CPU profile: ", err)
 		}
-		fmt.Println()
+		defer f.Close()
+		if err := pprof.StartCPUProfile(f); err != nil {
+			log.Fatal("could not start CPU profile: ", err)
+		}
+
+		defer pprof.StopCPUProfile()
 	}
+
+	pattern := []int8{0, 1, 0, -1}
 
 	fmt.Println("====")
 	Run(NumberFromString("12345678"), pattern, 4, 8)

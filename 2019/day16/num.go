@@ -43,17 +43,73 @@ func (a Number) Int() int {
 }
 
 func (a Number) FFT(pattern []int8) Number {
-	r := Number{
-		make([]int8, len(a.Digits)),
+	r := Number{make([]int8, len(a.Digits))}
+
+	prefix := make([]int64, len(a.Digits)+1)
+	var t int64
+	for i, v := range a.Digits {
+		t += int64(v)
+		prefix[i+1] = t
 	}
+
+	N, P := len(a.Digits), len(pattern)
 	for i := range a.Digits {
-		var t int64
-		for k, b := range a.Digits {
-			t += int64(b) * int64(Repeat(pattern, i, k))
+		var total int64
+
+		span := i + 1
+		p := 0
+
+		lo, hi := 0, i
+		total += (prefix[hi] - prefix[lo]) * int64(pattern[p])
+		for {
+			p++
+			if p >= P {
+				p = 0
+			}
+
+			lo, hi = hi, hi+span
+			if lo >= N {
+				break
+			}
+			if hi > N {
+				hi = N
+			}
+
+			pv := pattern[p]
+			if pv == 0 {
+			} else if pv == 1 {
+				total += (prefix[hi] - prefix[lo])
+			} else if pv == -1 {
+				total -= (prefix[hi] - prefix[lo])
+			} else {
+				total += (prefix[hi] - prefix[lo]) * int64(pv)
+			}
 		}
-		r.Digits[i] = Downsize(t)
+
+		r.Digits[i] = Downsize(total)
 	}
+
 	return r
+}
+
+func IterateSpans(index, n int, fn func(i int, lo, hi int)) {
+	span := index + 1
+
+	k := 0
+	lo, hi := 0, index
+
+	fn(k, lo, hi)
+	for {
+		k++
+		lo, hi = hi, hi+span
+		if lo >= n {
+			break
+		}
+		if hi > n {
+			hi = n
+		}
+		fn(k, lo, hi)
+	}
 }
 
 func Repeat(pattern []int8, out, in int) int8 {
