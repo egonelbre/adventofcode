@@ -18,6 +18,14 @@ func NumberFromString(s string) Number {
 	return n
 }
 
+func (a Number) Repeat(n int) Number {
+	r := Number{}
+	for i := 0; i < n; i++ {
+		r.Digits = append(r.Digits, a.Digits...)
+	}
+	return r
+}
+
 func (a Number) Slice(low, high int) Number {
 	n := Number{
 		Digits: make([]int8, high-low),
