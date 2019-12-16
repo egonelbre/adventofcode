@@ -18,6 +18,22 @@ func NumberFromString(s string) Number {
 	return n
 }
 
+func (a Number) Slice(low, high int) Number {
+	n := Number{
+		Digits: make([]int8, high-low),
+	}
+	copy(n.Digits, a.Digits[low:high])
+	return n
+}
+
+func (a Number) Int() int {
+	var v int
+	for _, n := range a.Digits {
+		v = v*10 + int(n)
+	}
+	return v
+}
+
 func (a Number) FFT(pattern []int8) Number {
 	r := Number{
 		make([]int8, len(a.Digits)),
@@ -36,10 +52,6 @@ func Repeat(pattern []int8, out, in int) int8 {
 	p := ((in + 1) / (out + 1))
 	//return int8(p % len(pattern))
 	return pattern[p%len(pattern)]
-}
-
-func PickRepeated(i, n int) int {
-	return i % n
 }
 
 func Downsize(t int64) int8 {
