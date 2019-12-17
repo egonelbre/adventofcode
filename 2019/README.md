@@ -40,7 +40,7 @@ The goal is to not do any testing of the code. It should work correctly the firs
 |     |   2  | Failure | Off-by-one when counting minutes. |
 |  16 |   1  | Failure | Wrong last digit func. Wrong pattern sequence. |
 |     |   2  | Failure | Naive solution was too slow. |
-|  17 |   1  |         |  |
+|  17 |   1  | Faliure | Forgot to invoke code. |
 |     |   2  |         |  |
 |  18 |   1  |         |  |
 |     |   2  |         |  |
