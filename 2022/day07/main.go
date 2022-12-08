@@ -1,0 +1,166 @@
+package main
+
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io"
+	"os"
+	"path"
+	"regexp"
+	"strconv"
+	"strings"
+)
+
+func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
+	input, err := os.ReadFile("test1.txt")
+	if err != nil {
+		return err
+	}
+
+	cmds, err := parseCommands(string(input))
+	if err != nil {
+		return err
+	}
+	reconstruct(cmds)
+
+	return nil
+}
+
+func reconstruct(cmds Commands) {
+	workingDir := ""
+	for _, cmd := range cmds {
+		switch cmd := cmd.(type) {
+		case CD:
+			switch {
+			case cmd.Target == "..":
+				workingDir = path.Dir(workingDir)
+			case path.IsAbs(cmd.Target):
+				workingDir = cmd.Target
+			default:
+				workingDir += cmd.Target
+			}
+			fmt.Println(workingDir)
+		case LS:
+			// TODO:
+		default:
+			panic(fmt.Sprintf("unhandled %#v", cmd))
+		}
+	}
+}
+
+type Commands []Command
+
+type Command any
+
+func parseCommands(output string) (Commands, error) {
+	rd := bufio.NewReader(strings.NewReader(output))
+	done := false
+	for !done {
+		line, err := rd.ReadString('\n')
+		done = errors.Is(err, io.EOF)
+		if line == "" {
+			continue
+		}
+	}
+
+	cmds := Commands{}
+	rxCommands := regexp.MustCompile(`(?m)\$ *`)
+	for _, cmdout := range rxCommands.Split(output, -1) {
+		if cmdout == "" {
+			continue
+		}
+		cmd, err := parseCommand(cmdout)
+		if err != nil {
+			return cmds, fmt.Errorf("failed to parse %q: %w", cmdout, err)
+		}
+		cmds = append(cmds, cmd)
+	}
+	return cmds, nil
+}
+
+var rxCommand = regexp.MustCompile(`(?s)([a-z]+) *([^\n]*)([^$]*)`)
+
+func parseCommand(output string) (Command, error) {
+	matches := rxCommand.FindStringSubmatch(output)
+	if len(matches) == 0 {
+		return nil, fmt.Errorf("invalid output %q", output)
+	}
+
+	cmd := CommandOutput{
+		Command: strings.TrimSpace(matches[1]),
+		Args:    strings.TrimSpace(matches[2]),
+		Output:  strings.TrimSpace(matches[3]),
+	}
+
+	parse, ok := commandParse[cmd.Command]
+	if !ok {
+		return nil, fmt.Errorf("unknown command %q", cmd.Command)
+	}
+
+	return parse(cmd)
+}
+
+type CommandOutput struct {
+	Command string
+	Args    string
+	Output  string
+}
+
+var commandParse = map[string]func(out CommandOutput) (Command, error){
+	"cd": parseCD,
+	"ls": parseLS,
+}
+
+type CD struct {
+	Target string
+}
+
+func parseCD(out CommandOutput) (Command, error) {
+	return CD{
+		Target: out.Args,
+	}, nil
+}
+
+type LS struct {
+	Files []FileInfo
+}
+
+type FileInfo struct {
+	Name  string
+	IsDir bool
+	Size  int
+}
+
+func parseLS(out CommandOutput) (Command, error) {
+	ls := LS{}
+	for _, line := range strings.Split(out.Output, "\n") {
+		if line == "" {
+			continue
+		}
+		num, name, _ := strings.Cut(line, " ")
+		if num == "dir" {
+			ls.Files = append(ls.Files, FileInfo{
+				Name:  name,
+				IsDir: true,
+			})
+		} else {
+			size, err := strconv.Atoi(num)
+			if err != nil {
+				return ls, fmt.Errorf("%q %q: %w", line, num, err)
+			}
+			ls.Files = append(ls.Files, FileInfo{
+				Name: name,
+				Size: size,
+			})
+		}
+	}
+	return ls, nil
+}
