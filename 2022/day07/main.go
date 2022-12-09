@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
 	"regexp"
 	"strconv"
 	"strings"
@@ -20,7 +19,7 @@ func main() {
 }
 
 func run() error {
-	input, err := os.ReadFile("test1.txt")
+	input, err := os.ReadFile("input1.txt")
 	if err != nil {
 		return err
 	}
@@ -29,31 +28,95 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	reconstruct(cmds)
+
+	root := reconstruct(cmds)
+	updateDirSize(root)
+	fmt.Println("total size", root.Size)
+
+	total := 0
+	iterateDirs(root, func(fi *FileInfo) {
+		if fi.Size < 100000 {
+			total += fi.Size
+		}
+	})
+	fmt.Println("total of small", total)
 
 	return nil
 }
 
-func reconstruct(cmds Commands) {
-	workingDir := ""
+func tree(node *FileInfo, prefix string) {
+	fmt.Printf("%s- %s %s\n", prefix, node.Name, node.OriginalStat())
+	for _, c := range node.Content {
+		tree(c, prefix+"  ")
+	}
+}
+
+func updateDirSize(root *FileInfo) {
+	var total int
+	for _, n := range root.Content {
+		if n.IsDir {
+			updateDirSize(n)
+		}
+		total += n.Size
+	}
+	root.Size = total
+}
+
+func iterateDirs(root *FileInfo, fn func(*FileInfo)) {
+	for _, c := range root.Content {
+		if c.IsDir {
+			fn(c)
+			iterateDirs(c, fn)
+		}
+	}
+}
+
+func reconstruct(cmds Commands) *FileInfo {
+	root := &FileInfo{Name: "/"}
+	root.Parent = root
+
+	workingFile := root
+
+	var find func(node *FileInfo, name string) *FileInfo
+	find = func(node *FileInfo, name string) *FileInfo {
+		if name == "" {
+			return node
+		}
+
+		dir, rest, _ := strings.Cut(name, "/")
+		for _, f := range node.Content {
+			if f.Name == dir {
+				return find(f, rest)
+			}
+		}
+
+		tree(node, "")
+		panic("did not find " + name)
+	}
+
 	for _, cmd := range cmds {
 		switch cmd := cmd.(type) {
 		case CD:
 			switch {
 			case cmd.Target == "..":
-				workingDir = path.Dir(workingDir)
-			case path.IsAbs(cmd.Target):
-				workingDir = cmd.Target
+				workingFile = workingFile.Parent
+			case strings.HasPrefix(cmd.Target, "/"):
+				workingFile = find(root, cmd.Target[1:])
 			default:
-				workingDir += cmd.Target
+				workingFile = find(workingFile, cmd.Target)
 			}
-			fmt.Println(workingDir)
 		case LS:
-			// TODO:
+			// TODO: verify that there are no duplicates
+			for _, f := range cmd.Files {
+				f.Parent = workingFile
+			}
+			workingFile.Content = append(workingFile.Content, cmd.Files...)
 		default:
 			panic(fmt.Sprintf("unhandled %#v", cmd))
 		}
 	}
+
+	return root
 }
 
 type Commands []Command
@@ -130,13 +193,24 @@ func parseCD(out CommandOutput) (Command, error) {
 }
 
 type LS struct {
-	Files []FileInfo
+	Files []*FileInfo
 }
 
 type FileInfo struct {
 	Name  string
 	IsDir bool
 	Size  int
+
+	Parent  *FileInfo
+	Content []*FileInfo
+}
+
+func (info *FileInfo) OriginalStat() string {
+	if info.IsDir {
+		return fmt.Sprintf("(dir, size=%d)", info.Size)
+	} else {
+		return fmt.Sprintf("(file, size=%d)", info.Size)
+	}
 }
 
 func parseLS(out CommandOutput) (Command, error) {
@@ -147,7 +221,7 @@ func parseLS(out CommandOutput) (Command, error) {
 		}
 		num, name, _ := strings.Cut(line, " ")
 		if num == "dir" {
-			ls.Files = append(ls.Files, FileInfo{
+			ls.Files = append(ls.Files, &FileInfo{
 				Name:  name,
 				IsDir: true,
 			})
@@ -156,7 +230,7 @@ func parseLS(out CommandOutput) (Command, error) {
 			if err != nil {
 				return ls, fmt.Errorf("%q %q: %w", line, num, err)
 			}
-			ls.Files = append(ls.Files, FileInfo{
+			ls.Files = append(ls.Files, &FileInfo{
 				Name: name,
 				Size: size,
 			})
