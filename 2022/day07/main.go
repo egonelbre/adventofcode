@@ -41,13 +41,32 @@ func run() error {
 	})
 	fmt.Println("total of small", total)
 
+	// printTree(root, "")
+	var best *FileInfo
+	totalSpace := 70000000
+	requiredFree := 30000000
+	missingFree := requiredFree - (totalSpace - root.Size)
+
+	iterateDirs(root, func(fi *FileInfo) {
+		if fi.Size > missingFree {
+			if best == nil {
+				best = fi
+			} else {
+				if best.Size > fi.Size {
+					best = fi
+				}
+			}
+		}
+	})
+	fmt.Println("best", best.Full(), best.Size)
+
 	return nil
 }
 
-func tree(node *FileInfo, prefix string) {
+func printTree(node *FileInfo, prefix string) {
 	fmt.Printf("%s- %s %s\n", prefix, node.Name, node.OriginalStat())
 	for _, c := range node.Content {
-		tree(c, prefix+"  ")
+		printTree(c, prefix+"  ")
 	}
 }
 
@@ -90,7 +109,7 @@ func reconstruct(cmds Commands) *FileInfo {
 			}
 		}
 
-		tree(node, "")
+		printTree(node, "")
 		panic("did not find " + name)
 	}
 
@@ -203,6 +222,13 @@ type FileInfo struct {
 
 	Parent  *FileInfo
 	Content []*FileInfo
+}
+
+func (info *FileInfo) Full() string {
+	if info.Parent == nil || info == info.Parent {
+		return ""
+	}
+	return info.Parent.Full() + "/" + info.Name
 }
 
 func (info *FileInfo) OriginalStat() string {
