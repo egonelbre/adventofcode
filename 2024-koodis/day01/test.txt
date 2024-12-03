@@ -1,0 +1,4 @@
+Kelluke: 1.64
+ForMe: 1.89
+Dynamit: 0.92
+odForMedFuDrDynamiti
