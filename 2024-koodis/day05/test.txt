@@ -1,0 +1,23 @@
+Sündmused:
+Naaber viib prügikoti välja: 0
+Naaber kaevab midagi tagahoovis: 5
+Naaber kannab raskeid kotte autosse: 2
+Naaber lohistab suurt musta kotti keldrisse: 10
+Naaber vaatab pikalt aknast välja: 7
+Naaber viib hilisõhtul midagi autosse: 4
+Naaber grillib keset talve: 1
+Naaber paneb keset päeva kardinad kinni: 6
+Naaber lahkub hilisõhtul majast: 3
+Naabril käivad pidevalt külalised, kes kauaks ei jää: 7
+Naaber väldib teisi naabreid: 5
+Naaber jalutab oma koera: -1
+Naaber parandab oma aeda: -3
+Naaber kaunistab maja: -2
+Naaber on alati sõbralik: -5
+Naaber laenab suhkrut, et piparkooke küpsetada: 0
+Naabrid:
+0: Naaber on alati sõbralik, Naaber vaatab pikalt aknast välja, Naaber jalutab oma koera, Naaber viib prügikoti välja, Naaber vaatab pikalt aknast välja
+1: Naaber parandab oma aeda, Naaber kaunistab maja, Naaber grillib keset talve
+2: Naaber lahkub hilisõhtul majast, Naabril käivad pidevalt külalised, kes kauaks ei jää, Naaber kannab raskeid kotte autosse, Naaber väldib teisi naabreid
+3: Naaber väldib teisi naabreid, Naaber väldib teisi naabreid
+4: Naaber kaunistab maja, Naaber viib hilisõhtul midagi autosse, Naaber viib prügikoti välja
