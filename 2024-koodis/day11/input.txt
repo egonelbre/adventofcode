@@ -1,0 +1,70 @@
+Sõbrad:
+Taavi
+Tarvo
+Sander
+Lauri
+Mati
+Rita
+Kaarel
+Henrik
+Kristjan
+Einar
+Eve
+Jaak
+Moonika
+Mait
+Ingrid
+Rein
+Jaan
+Marek
+Ivar
+Siim
+Aivar
+Aare
+Kristiina
+Linda
+Sulev
+Indrek
+Argo
+Elias
+Ilmar
+Mihkel
+Kalle
+Kertu
+Joel
+Mari-Liis
+Artur
+Priit
+
+Ei meeldi:
+Taavi: Kristiina, Rein, Kalle, Moonika, Jaak, Kaarel, Aivar
+Tarvo: Ingrid, Linda, Kristjan, Eve, Indrek, Argo, Sander, Lauri, Ilmar, Marek, Kertu, Joel, Moonika, Siim, Artur
+Rita: Kristiina
+Kaarel: Moonika, Linda, Mait, Eve
+Henrik: Jaan, Taavi
+Kristjan: Eve, Siim
+Eve: Kristiina, Ingrid, Henrik, Kristjan, Indrek, Tarvo, Kalle, Ilmar, Ivar, Mait, Kaarel
+Jaak: Taavi, Tarvo, Lauri, Rita, Einar, Eve, Moonika, Ingrid, Rein, Siim, Indrek, Argo, Kalle, Elias, Ilmar, Joel, Mari-Liis, Artur
+Rein: Kristiina, Einar, Eve, Sulev, Tarvo, Argo, Lauri, Mihkel, Kalle, Kertu, Ivar, Mait, Siim, Mari-Liis, Artur, Priit
+Marek: Tarvo, Siim, Elias
+Siim: Taavi, Sander, Henrik, Kristjan, Einar, Jaak, Mait, Rein, Ivar, Aivar, Aare, Kristiina, Sulev, Indrek, Kalle, Elias, Kertu, Artur, Priit
+Aivar: Kristiina, Rein, Lauri, Mihkel, Mait
+Kristiina: Linda, Taavi, Argo, Sander, Mihkel, Ilmar, Marek, Elias, Joel, Moonika, Jaak, Mait, Mari-Liis
+Linda: Ilmar, Kristiina, Taavi
+Argo: Kristiina, Ingrid, Henrik, Linda, Eve, Kaarel, Indrek, Lauri, Mihkel, Kalle, Ilmar, Kertu, Ivar, Siim, Jaan
+Elias: Kristiina, Rein, Einar, Sulev, Tarvo, Kalle, Mihkel, Marek, Ilmar, Ivar, Moonika, Siim, Priit
+Kertu: Kristiina, Rein, Siim
+Joel: Taavi, Lauri, Rita, Kristjan, Eve, Jaak, Mait, Artur, Ivar, Aivar, Kristiina, Argo, Kalle, Elias, Ilmar, Kertu, Mari-Liis, Jaan, Priit
+Artur: Ingrid, Indrek, Tarvo, Kalle, Ilmar, Elias, Moonika, Kertu, Ivar, Rita, Siim, Mari-Liis, Mati
+
+Ei ole kutsutud:
+Kristiina
+Henrik
+Sulev
+Sander
+Kalle
+Joel
+Mati
+Kaarel
+Aare
+Priit

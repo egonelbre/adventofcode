@@ -1,0 +1,26 @@
+Sõbrad:
+Meelis
+Raimond
+Lilian
+Marek
+Valeria
+Henrik
+Riho
+Jelena
+Sulev
+Joel
+
+Ei meeldi:
+Valeria: Lilian
+Jelena: Lilian, Meelis
+Sulev: Raimond, Marek, Lilian, Valeria, Joel
+
+Ei ole kutsutud:
+Meelis
+Raimond
+Valeria
+Marek
+Riho
+Jelena
+Sulev
+Joel
