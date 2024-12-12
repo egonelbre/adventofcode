@@ -1,0 +1,9 @@
+ema-165-35-punane mantel
+isa-175-40-sinine jakk
+Heino-180-45-räpane särk
+lilian-160-30-puhas mantel
+
+165 cm, 35 aastat vana, seljas on punane mantel
+180 cm, 45 aastat vana, seljas on räpane särk
+160 cm, 30 aastat vana, seljas on sinine mantel
+180 cm, 45 aastat vana, seljas on räpane särk
