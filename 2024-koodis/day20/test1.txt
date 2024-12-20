@@ -1,0 +1,4 @@
+Pärnu: Tallinn - 151min| ; |Tartu - 118min| ; |Lennarti Kodu - 181min
+Tallinn: Pärnu - 123min| ; |Tartu - 130min| ; |Lennarti Kodu - 108min
+Tartu: Pärnu - 71min| ; |Tallinn - 79min| ; |Lennarti Kodu - 147min
+Lennarti Kodu: Pärnu - 123min| ; |Tallinn - 82min| ; |Tartu - 240min
