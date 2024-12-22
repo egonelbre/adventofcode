@@ -1,0 +1,10 @@
+Lõksud:
+0: puit:10, naelad:5, köis:7
+1: puit:1, naelad:6, köis:10
+2: puit:8, naelad:4, köis:4
+3: puit:9, naelad:10, köis:8
+4: puit:2, naelad:4, köis:6
+Ressursid:
+puit: 10
+naelad: 10
+köis: 10

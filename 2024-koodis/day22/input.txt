@@ -1,0 +1,35 @@
+Lõksud:
+0: puit:28, naelad:21, köis:62
+1: puit:65, naelad:76, köis:53
+2: puit:58, naelad:15, köis:67
+3: puit:71, naelad:79, köis:28
+4: puit:93, naelad:77, köis:48
+5: puit:68, naelad:45, köis:78
+6: puit:66, naelad:95, köis:12
+7: puit:49, naelad:77, köis:17
+8: puit:48, naelad:15, köis:40
+9: puit:51, naelad:21, köis:17
+10: puit:13, naelad:62, köis:48
+11: puit:27, naelad:66, köis:59
+12: puit:34, naelad:56, köis:55
+13: puit:71, naelad:78, köis:46
+14: puit:75, naelad:67, köis:90
+15: puit:53, naelad:80, köis:19
+16: puit:13, naelad:91, köis:11
+17: puit:85, naelad:87, köis:29
+18: puit:98, naelad:42, köis:98
+19: puit:97, naelad:43, köis:79
+20: puit:68, naelad:45, köis:79
+21: puit:26, naelad:67, köis:99
+22: puit:80, naelad:55, köis:74
+23: puit:42, naelad:96, köis:79
+24: puit:54, naelad:14, köis:54
+25: puit:71, naelad:70, köis:23
+26: puit:22, naelad:29, köis:59
+27: puit:38, naelad:84, köis:32
+28: puit:91, naelad:12, köis:12
+29: puit:38, naelad:44, köis:71
+Ressursid:
+puit: 447
+naelad: 433
+köis: 474
