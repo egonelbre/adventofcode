@@ -1,0 +1,3 @@
+Kalle: Nõude pesemine-6 min;Külaliste nimekiri üle kontrollida-42 min;Laste tegevuste ala planeerida-64 min;Laudade tassimine-117 min;Joogimenüü kokku panna-37 min
+Martin: Nõude pesemine-56 min;Külaliste nimekiri üle kontrollida-61 min;Laste tegevuste ala planeerida-28 min;Laudade tassimine-56 min;Joogimenüü kokku panna-118 min
+Lennart: Nõude pesemine-78 min;Külaliste nimekiri üle kontrollida-30 min;Laste tegevuste ala planeerida-62 min;Laudade tassimine-38 min;Joogimenüü kokku panna-9 min
